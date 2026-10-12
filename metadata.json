@@ -1,0 +1,8 @@
+{
+  "name": "UpPriceAPI - E-Commerce Price Sync & Intelligence Platform",
+  "description": "Automated price synchronization, competitor intelligence, and dynamic pricing API platform for Iranian online shops and marketplaces.",
+  "version": "1.0.0",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
