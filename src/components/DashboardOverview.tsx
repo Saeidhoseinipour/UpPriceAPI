@@ -53,7 +53,17 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
     }, 0) / (totalProducts || 1)
   );
 
-  const usdtRate = fxRates.find((r) => r.code === 'USDT') || fxRates[0];
+  const usdtRate =
+    fxRates.find((r) => r.code === 'USDT') ||
+    fxRates[0] || {
+      id: 'default',
+      code: 'USDT' as const,
+      name: 'Tether (USDT)',
+      nameFa: 'تتر (USDT)',
+      rateToman: 93450,
+      change24h: 1.45,
+      updatedAt: new Date().toISOString(),
+    };
 
   return (
     <div className="space-y-6">

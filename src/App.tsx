@@ -10,6 +10,15 @@ import { ApiExplorer } from './components/ApiExplorer';
 import { HistoryAudit } from './components/HistoryAudit';
 import { TorobFeedModal } from './components/TorobFeedModal';
 import { ProductEditModal } from './components/ProductEditModal';
+import { AiPriceSearchModal } from './components/AiPriceSearchModal';
+import { WooCommerceModal } from './components/WooCommerceModal';
+import {
+  initialProducts,
+  initialFXRates,
+  initialRules,
+  initialAuditLogs,
+  initialApiKeys,
+} from './mockData';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 
 interface ToastMessage {
@@ -23,17 +32,20 @@ export function App() {
   const [isPersian, setIsPersian] = useState<boolean>(true);
   const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('TOMAN');
 
-  // Application Data States
-  const [products, setProducts] = useState<Product[]>([]);
-  const [fxRates, setFxRates] = useState<FXRate[]>([]);
-  const [rules, setRules] = useState<PricingRule[]>([]);
-  const [auditLogs, setAuditLogs] = useState<PriceAuditLog[]>([]);
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  // Application Data States (initialized immediately to avoid any blank flash)
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [fxRates, setFxRates] = useState<FXRate[]>(initialFXRates);
+  const [rules, setRules] = useState<PricingRule[]>(initialRules);
+  const [auditLogs, setAuditLogs] = useState<PriceAuditLog[]>(initialAuditLogs);
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>(initialApiKeys);
 
   // Modals & Loaders
   const [isFeedModalOpen, setIsFeedModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAiSearchOpen, setIsAiSearchOpen] = useState(false);
+  const [isWooCommerceOpen, setIsWooCommerceOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [aiSearchTargetProduct, setAiSearchTargetProduct] = useState<Product | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
@@ -246,6 +258,22 @@ export function App() {
     }
   };
 
+  // Apply Discovered Price from Gemini AI
+  const handleApplyDiscoveredPrice = (
+    productId: string,
+    priceToman: number,
+    sellerName: string,
+    sourceUrl: string
+  ) => {
+    addToast(
+      isPersian
+        ? `قیمت زنده ${priceToman.toLocaleString('fa-IR')} تومان از وب اعمال شد`
+        : `Discovered price ${priceToman.toLocaleString()} Tomans applied to SKU`,
+      'success'
+    );
+    fetchData();
+  };
+
   const outOfSyncCount = products.filter((p) => p.syncStatus !== 'SYNCED').length;
 
   return (
@@ -259,6 +287,11 @@ export function App() {
         onSyncAll={() => handleBatchSync('OUT_OF_SYNC')}
         isSyncing={isSyncing}
         onOpenFeedModal={() => setIsFeedModalOpen(true)}
+        onOpenAiSearch={() => {
+          setAiSearchTargetProduct(products[0] || null);
+          setIsAiSearchOpen(true);
+        }}
+        onOpenWooCommerce={() => setIsWooCommerceOpen(true)}
         onSimulateCompetitorMove={() => handleSimulateCompetitorMove()}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -293,6 +326,10 @@ export function App() {
             onOpenEditModal={(prod) => {
               setEditingProduct(prod);
               setIsEditModalOpen(true);
+            }}
+            onOpenAiSearchProduct={(prod) => {
+              setAiSearchTargetProduct(prod);
+              setIsAiSearchOpen(true);
             }}
             onBatchSync={handleBatchSync}
             isSyncing={isSyncing}
@@ -378,6 +415,25 @@ export function App() {
         rules={rules}
         isPersian={isPersian}
         onSave={handleSaveProduct}
+      />
+
+      {/* AI Live Price Discovery Modal (Gemini Search Grounding) */}
+      <AiPriceSearchModal
+        isOpen={isAiSearchOpen}
+        onClose={() => setIsAiSearchOpen(false)}
+        products={products}
+        selectedProduct={aiSearchTargetProduct}
+        isPersian={isPersian}
+        currencyUnit={currencyUnit}
+        onApplyDiscoveredPrice={handleApplyDiscoveredPrice}
+      />
+
+      {/* Real WooCommerce Store Connector Modal */}
+      <WooCommerceModal
+        isOpen={isWooCommerceOpen}
+        onClose={() => setIsWooCommerceOpen(false)}
+        isPersian={isPersian}
+        onRefreshProducts={fetchData}
       />
 
       {/* Floating Toast Notifications */}

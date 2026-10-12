@@ -15,6 +15,7 @@ import {
   Tag,
   Check,
   X,
+  Sparkles,
 } from 'lucide-react';
 
 interface ProductsCatalogProps {
@@ -26,6 +27,7 @@ interface ProductsCatalogProps {
   onUpdateProductPrice: (id: string, newPriceToman: number) => void;
   onOpenAddModal: () => void;
   onOpenEditModal: (product: Product) => void;
+  onOpenAiSearchProduct?: (product: Product) => void;
   onBatchSync: (mode: 'OUT_OF_SYNC' | 'ALL') => void;
   isSyncing: boolean;
 }
@@ -39,6 +41,7 @@ export const ProductsCatalog: React.FC<ProductsCatalogProps> = ({
   onUpdateProductPrice,
   onOpenAddModal,
   onOpenEditModal,
+  onOpenAiSearchProduct,
   onBatchSync,
   isSyncing,
 }) => {
@@ -392,6 +395,14 @@ export const ProductsCatalog: React.FC<ProductsCatalogProps> = ({
                               ✓ {isPersian ? 'همگام' : 'Synced'}
                             </span>
                           )}
+
+                          <button
+                            onClick={() => onOpenAiSearchProduct?.(prod)}
+                            className="p-1 rounded bg-gradient-to-r from-cyan-950 to-emerald-950 border border-cyan-800/60 hover:border-cyan-500/80 text-cyan-300 transition"
+                            title="Search live price online with Gemini AI"
+                          >
+                            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                          </button>
 
                           <button
                             onClick={() => onOpenEditModal(prod)}

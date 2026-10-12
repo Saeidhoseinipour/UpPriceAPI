@@ -19,6 +19,8 @@ interface HeaderProps {
   onSyncAll: () => void;
   isSyncing: boolean;
   onOpenFeedModal: () => void;
+  onOpenAiSearch: () => void;
+  onOpenWooCommerce: () => void;
   onSimulateCompetitorMove: () => void;
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -33,6 +35,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSyncAll,
   isSyncing,
   onOpenFeedModal,
+  onOpenAiSearch,
+  onOpenWooCommerce,
   onSimulateCompetitorMove,
   activeTab,
   setActiveTab,
@@ -119,6 +123,25 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Globe2 className="w-3.5 h-3.5 text-cyan-400" />
               <span>{isPersian ? 'EN' : 'فارسی'}</span>
+            </button>
+
+            {/* AI Price Finder Button */}
+            <button
+              onClick={onOpenAiSearch}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-cyan-500/40 bg-gradient-to-r from-cyan-950/60 to-emerald-950/60 hover:from-cyan-900/60 hover:to-emerald-900/60 text-cyan-300 text-xs font-semibold shadow-sm transition"
+              title="Search live web prices using Gemini AI"
+            >
+              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+              <span>{isPersian ? 'جستجوی زنده با هوش مصنوعی' : 'AI Live Price Finder'}</span>
+            </button>
+
+            {/* WooCommerce Store Connect */}
+            <button
+              onClick={onOpenWooCommerce}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-purple-500/30 bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 text-xs font-medium transition"
+              title="Connect real WooCommerce shop via API"
+            >
+              <span>{isPersian ? 'اتصال ووکامرس' : 'WooCommerce'}</span>
             </button>
 
             {/* Torob Feed Button */}
