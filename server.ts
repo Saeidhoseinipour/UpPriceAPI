@@ -543,7 +543,10 @@ app.post('/api/v1/simulate/competitor-move', (req: Request, res: Response) => {
 // Mount Vite in development or serve static in production
 if (process.env.NODE_ENV !== 'production') {
   const vite = await createViteServer({
-    server: { middlewareMode: true },
+    server: {
+      middlewareMode: true,
+      allowedHosts: true,
+    },
     appType: 'spa',
   });
   app.use(vite.middlewares);
