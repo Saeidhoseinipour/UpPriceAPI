@@ -12,8 +12,8 @@ import {
 import { Product, FXRate, PricingRule, PriceAuditLog, ApiKey } from './src/types';
 
 const app = express();
-const PORT = 3000;
-const HOST = '0.0.0.0';
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 // Initialize Gemini Client server-side
 const ai = process.env.GEMINI_API_KEY
@@ -97,6 +97,13 @@ function refreshAllSuggestedPrices() {
 
 // Initialize prices on start
 refreshAllSuggestedPrices();
+
+// 24/7 Background Scheduler: periodically recalculates suggested prices every 15 minutes
+const SYNC_INTERVAL_MS = 15 * 60 * 1000;
+setInterval(() => {
+  console.log(`[24/7 Daemon] Running automated background price evaluation at ${new Date().toISOString()}`);
+  refreshAllSuggestedPrices();
+}, SYNC_INTERVAL_MS);
 
 // ================= API ROUTES ================= //
 
